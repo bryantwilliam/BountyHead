@@ -12,7 +12,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class onSignRightClickListener implements Listener {
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onSign(PlayerInteractEvent event) {
         if (event.isCancelled()) return;
         Player player = event.getPlayer();
