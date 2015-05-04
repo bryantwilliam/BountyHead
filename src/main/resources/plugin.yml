@@ -1,6 +1,6 @@
-name: com.gmail.gogobebe2.bountyhead.BountyHead
-version: 1.0.1-DEVELOPMENT-SNAPSHOT
-main: com.gmail.gogobebe2.bountyhead.com.gmail.gogobebe2.bountyhead.BountyHead
+name: BountyHead
+version: 1.0.2-DEVELOPMENT-SNAPSHOT
+main: com.gmail.gogobebe2.bountyhead.BountyHead
 description: Head economy and monopoly.
 author: William Bryant (gogobebe2)
 website: gogobebe2@gmail.com
