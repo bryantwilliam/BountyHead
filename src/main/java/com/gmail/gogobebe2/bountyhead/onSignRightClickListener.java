@@ -18,6 +18,7 @@ public class onSignRightClickListener implements Listener {
         Player player = event.getPlayer();
         if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
             if (BountyHead.isHeadSign(event.getClickedBlock())) {
+                // TODO: check permission.
                 ItemStack[] inventory = player.getInventory().getContents();
                 int skullAmount = getSkullAmount(inventory);
                 if (skullAmount == 0) {

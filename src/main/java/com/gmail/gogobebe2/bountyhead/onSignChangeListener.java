@@ -17,6 +17,7 @@ public class onSignChangeListener implements Listener{
         Block block = event.getBlock();
         if (BountyHead.isSign(block)) {
             Sign sign = (Sign) block;
+            // TODO: check for permission.
             if (createHeadSign(sign)) {
                 Player player = event.getPlayer();
                 player.sendMessage(ChatColor.GREEN + "Head selling sign created!");
