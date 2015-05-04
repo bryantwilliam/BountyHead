@@ -1,7 +1,6 @@
 package com.gmail.gogobebe2.bountyhead;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
@@ -22,13 +21,8 @@ public class BountyHead extends JavaPlugin {
         return false;
     }
 
-    public static boolean isSign(Block block) {
-        return (block.equals(Material.SIGN) || block.equals(Material.SIGN_POST)
-                || block.equals(Material.WALL_SIGN));
-    }
-
     public static boolean isHeadSign(Block block) {
-        if (!isSign(block)) {
+        if (!(block.getState() instanceof Sign)) {
             return false;
         }
         Sign sign = (Sign) block.getState();

@@ -38,9 +38,11 @@ public class onSignRightClickListener implements Listener {
 
     private int getSkullAmount(ItemStack[] inventory) {
         int amount = 0;
-        for (ItemStack item : inventory) {
-            if (item.getType().equals(Material.SKULL_ITEM)) {
-                amount += item.getAmount();
+        if (inventory.length > 0) {
+            for (ItemStack item : inventory) {
+                if (item.getType().equals(Material.SKULL_ITEM)) {
+                    amount += item.getAmount();
+                }
             }
         }
         return amount;
