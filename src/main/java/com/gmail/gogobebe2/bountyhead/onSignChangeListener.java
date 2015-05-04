@@ -1,3 +1,5 @@
+package com.gmail.gogobebe2.bountyhead;
+
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
