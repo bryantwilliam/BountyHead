@@ -18,8 +18,8 @@ public class onSignChangeListener implements Listener {
         if (createHeadSign(sign)) {
             Player player = event.getPlayer();
             player.sendMessage(ChatColor.GREEN + "Head selling sign created!");
-
         }
+        event.getPlayer().sendMessage(sign.getLine(0) + " and " + sign.getLine(1));
     }
 
     private static boolean createHeadSign(Sign sign) {
