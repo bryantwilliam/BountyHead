@@ -1,4 +1,4 @@
-package com.gmail.gogobebe2.bountyhead;
+package com.gmail.gogobebe2.bountyhead.Listeners;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;

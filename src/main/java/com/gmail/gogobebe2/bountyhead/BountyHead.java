@@ -1,5 +1,6 @@
 package com.gmail.gogobebe2.bountyhead;
 
+import com.gmail.gogobebe2.bountyhead.Listeners.*;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -10,7 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class BountyHead extends JavaPlugin {
     @Override
     public void onEnable() {
-        getLogger().info("Starting up com.gmail.gogobebe2.bountyhead.BountyHead. If you have any bugs or problems, email me at: gogobebe2@gmail.com");
+        getLogger().info("Starting up BountyHead. If you have any bugs or problems, email me at: gogobebe2@gmail.com");
         getServer().getPluginManager().registerEvents(new onSignChangeListener(), this);
         getServer().getPluginManager().registerEvents(new onSignRightClickListener(), this);
     }
