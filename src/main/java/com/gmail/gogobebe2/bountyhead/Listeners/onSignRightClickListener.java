@@ -21,8 +21,7 @@ public class onSignRightClickListener implements Listener {
         if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
             if (BountyHead.isHeadSign(event.getClickedBlock())) {
                 // TODO: check permission.
-                int skullAmount = getSkullAmount(player.getInventory());
-                if (skullAmount == 0) {
+                if (!player.getInventory().contains(Material.SKULL_ITEM, 1)) {
                     player.sendMessage(ChatColor.RED + "Oops! You don't have any heads in your inventory!");
                 } else {
                     sellSkull(player);
@@ -34,32 +33,43 @@ public class onSignRightClickListener implements Listener {
 
     private void sellSkull(Player player) {
         // TODO: balance multiplier.
-        boolean isSneaking = player.isSneaking();
-        int amount = isSneaking ? 64 : 1;
-        player.sendMessage(ChatColor.GREEN + "Sold " + amount + " heads.");
+        Inventory inventory = player.getInventory();
+        final boolean IS_SNEAKING = player.isSneaking();
+        final int AMOUNT;
+        if (IS_SNEAKING) {
+            if (inventory.contains(Material.SKULL_ITEM, 64))
+                AMOUNT = 64;
+            else {
+                AMOUNT = inventory.getItem(inventory.first(Material.SKULL_ITEM)).getAmount();
+            }
+        } else {
+            AMOUNT = 1;
+        }
+        player.sendMessage("DEBUG MESSAGE: " + AMOUNT);
+        int amountToSell = AMOUNT;
         while (true) {
-            Inventory inventory = player.getInventory();
             int slot = inventory.first(Material.SKULL_ITEM);
             ItemStack item = inventory.getItem(slot);
-            amount -= item.getAmount();
-            inventory.remove(item);
-            if (amount <= 0) {
+            int itemAmount = item.getAmount();
+            if (IS_SNEAKING) {
+                if (amountToSell > itemAmount) {
+                    amountToSell -= itemAmount;
+                } else {
+                    amountToSell = 0;
+                }
+                item.setAmount(itemAmount - amountToSell);
+                if (amountToSell == 0) {
+                    inventory.setItem(slot, item);
+                    break;
+                }
+            } else {
+                item.setAmount(itemAmount - 1);
+                inventory.setItem(slot, item);
                 break;
             }
         }
-    }
-
-    private int getSkullAmount(Inventory inventory) {
-        ItemStack[] contents = inventory.getContents();
-        int amount = 0;
-        if (contents.length != 0) {
-            for (ItemStack item : contents) {
-                if (item != null && item.getType().equals(Material.SKULL_ITEM)) {
-                    amount += item.getAmount();
-                }
-            }
-        }
-        return amount;
+        player.updateInventory();
+        player.sendMessage(ChatColor.GREEN + "Sold " + AMOUNT + " heads.");
     }
 }
 
