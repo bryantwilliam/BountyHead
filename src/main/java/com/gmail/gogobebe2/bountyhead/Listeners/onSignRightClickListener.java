@@ -45,16 +45,19 @@ public class onSignRightClickListener implements Listener {
             owner = owner.replaceFirst("MHF_", "");
         }
         for (String headName : plugin.getConfig().getConfigurationSection("prices.mobs").getKeys(false)) {
+            plugin.getLogger().severe("DEBUG: headname: prices.mobs." + headName + " owner: " + owner);
             if (headName.equalsIgnoreCase(owner)) {
                 return HeadType.MOB;
             }
         }
         for (String headName : plugin.getConfig().getConfigurationSection("prices.blocks").getKeys(false)) {
+            plugin.getLogger().severe("DEBUG: headname: prices.blocks." + headName + " owner: " + owner);
             if (headName.equalsIgnoreCase(owner)) {
                 return HeadType.BLOCK;
             }
         }
         for (String headName : plugin.getConfig().getConfigurationSection("prices.bonus").getKeys(false)) {
+            plugin.getLogger().severe("DEBUG: headname: prices.bonus." + headName + " owner: " + owner);
             if (headName.equalsIgnoreCase(owner)) {
                 return HeadType.BONUS;
             }
@@ -87,7 +90,7 @@ public class onSignRightClickListener implements Listener {
                 try {
                     balance = BountyHead.getEss3().getUser(head).getMoney().doubleValue();
                 } catch (NullPointerException exc) {
-                    balance = 0;
+                    balance = 1;
                 }
                 return (plugin.getConfig().getDouble("prices.players.percentage") / 100) * balance;
             }
