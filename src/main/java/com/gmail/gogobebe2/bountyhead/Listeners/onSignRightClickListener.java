@@ -66,12 +66,31 @@ public class onSignRightClickListener implements Listener {
         return HeadType.PLAYER;
     }
 
-    private double getSkullPrice(SkullMeta skull) {
+    private double getSkullPrice(ItemStack skull) {
+        SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
         String head;
-        if (skull.hasOwner()) {
-            head = skull.getOwner();
-        } else {
-            head = skull.getDisplayName();
+        if (skullMeta.hasOwner()) {
+            head = skullMeta.getOwner();
+        } else if (skullMeta.hasDisplayName()) {
+            head = skullMeta.getDisplayName();
+        }
+        else if (skull.getDurability() == 0){
+            head = "Skeleton";
+        }
+        else if (skull.getDurability() == 1) {
+            head = "WSkeleton";
+        }
+        else if (skull.getDurability() == 2) {
+            head = "Zombie";
+        }
+        else if (skull.getDurability() == 3) {
+            head = "Head";
+        }
+        else if (skull.getDurability() == 4) {
+            head = "Creeper";
+        }
+        else {
+            head = "Unknown";
         }
         HeadType headType = getHeadType(head);
         if (plugin.getConfig().isSet("prices.all")) {
@@ -120,8 +139,7 @@ public class onSignRightClickListener implements Listener {
             throw new NullPointerException("Null pointer exception! There are no items in the player's inventory that have the Material of Material.SKULL_ITEM");
         }
         ItemStack item = inventory.getItem(slot);
-        SkullMeta skull = (SkullMeta) item.getItemMeta();
-        double price = getSkullPrice(skull);
+        double price = getSkullPrice(item);
         if (IS_SNEAKING) {
             AMOUNT = item.getAmount();
         } else {
