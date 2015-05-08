@@ -40,44 +40,56 @@ public class onSignRightClickListener implements Listener {
         }
     }
 
-    private HeadType getHeadType(SkullMeta skull) {
-        if (skull.getOwner().contains("HMF_")) {
-            String owner = skull.getOwner().replaceFirst("MHF_", "");
-            for (String headName : plugin.getConfig().getConfigurationSection("prices.mobs").getKeys(false)) {
-                if (headName.equalsIgnoreCase(owner)) {
-                    return HeadType.MOB;
-                }
-            }
-            for (String headName : plugin.getConfig().getConfigurationSection("prices.blocks").getKeys(false)) {
-                if (headName.equalsIgnoreCase(owner)) {
-                    return HeadType.BLOCK;
-                }
-            }
-            for (String headName : plugin.getConfig().getConfigurationSection("prices.bonus").getKeys(false)) {
-                if (headName.equalsIgnoreCase(owner)) {
-                    return HeadType.BONUS;
-                }
+    private HeadType getHeadType(String owner) {
+        if (owner.contains("MHF_")) {
+            owner = owner.replaceFirst("MHF_", "");
+        }
+        for (String headName : plugin.getConfig().getConfigurationSection("prices.mobs").getKeys(false)) {
+            if (headName.equalsIgnoreCase(owner)) {
+                return HeadType.MOB;
             }
         }
+        for (String headName : plugin.getConfig().getConfigurationSection("prices.blocks").getKeys(false)) {
+            if (headName.equalsIgnoreCase(owner)) {
+                return HeadType.BLOCK;
+            }
+        }
+        for (String headName : plugin.getConfig().getConfigurationSection("prices.bonus").getKeys(false)) {
+            if (headName.equalsIgnoreCase(owner)) {
+                return HeadType.BONUS;
+            }
+        }
+
         return HeadType.PLAYER;
     }
 
     private double getSkullPrice(SkullMeta skull) {
-        HeadType headType = getHeadType(skull);
-        String head = skull.getOwner();
+        String head;
+        if (skull.hasOwner()) {
+            head = skull.getOwner();
+        } else {
+            head = "Unknown";
+        }
+        HeadType headType = getHeadType(head);
         if (plugin.getConfig().isSet("prices.all")) {
             return plugin.getConfig().getDouble("prices.all");
-        } else if (plugin.getConfig().isSet("prices.allMobs")) {
+        } else if (plugin.getConfig().isSet("prices.allMobs") && headType.equals(HeadType.MOB)) {
             return plugin.getConfig().getDouble("prices.allMobs");
-        } else if (plugin.getConfig().isSet("prices.allBlocks")) {
+        } else if (plugin.getConfig().isSet("prices.allBlocks") && headType.equals(HeadType.BLOCK)) {
             return plugin.getConfig().getDouble("prices.allBlocks");
-        } else if (plugin.getConfig().isSet("prices.allBonus")) {
+        } else if (plugin.getConfig().isSet("prices.allBonus") && headType.equals(HeadType.BONUS)) {
             return plugin.getConfig().getDouble("prices.allBonus");
         } else if (headType.equals(HeadType.PLAYER)) {
             if (plugin.getConfig().isSet("prices.players.specificPlayer." + head)) {
                 return plugin.getConfig().getDouble("prices.players.specificPlayer." + head);
             } else {
-                return (plugin.getConfig().getDouble("prices.players.percentage") / 100) * BountyHead.getEss3().getUser(head).getMoney().doubleValue();
+                double balance;
+                try {
+                    balance = BountyHead.getEss3().getUser(head).getMoney().doubleValue();
+                } catch (NullPointerException exc) {
+                    balance = 0;
+                }
+                return (plugin.getConfig().getDouble("prices.players.percentage") / 100) * balance;
             }
         } else {
             if (head.contains("MHF_")) {
@@ -112,7 +124,7 @@ public class onSignRightClickListener implements Listener {
         } else {
             AMOUNT = 1;
         }
-        price *= price;
+        price *= AMOUNT;
 
         try {
             BountyHead.getEss3().getUser(player).giveMoney(BigDecimal.valueOf(price));
@@ -120,12 +132,10 @@ public class onSignRightClickListener implements Listener {
             player.sendMessage(ChatColor.DARK_RED + "Error! Max money limit reached! Please report this error to the server administrator!");
         }
         item.setAmount(item.getAmount() - AMOUNT);
-
-        player.sendMessage("DEBUG MESSAGE: " + AMOUNT);
         inventory.setItem(slot, item);
         player.updateInventory();
         player.sendMessage(ChatColor.GREEN + "Sold " + ChatColor.BOLD + AMOUNT + ChatColor.GREEN + ChatColor.BOLD
-                + " heads for " + plugin.getConfig().getString("currencySymbol") + price + ChatColor.GREEN + ".");
+                + ((AMOUNT == 1) ? " head " : " heads for ") + plugin.getConfig().getString("currencySymbol") + price + ChatColor.GREEN + ".");
     }
 }
 
