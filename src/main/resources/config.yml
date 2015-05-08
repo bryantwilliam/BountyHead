@@ -1,0 +1,58 @@
+currencySymbol: '$'
+prices:
+  # To set prices of each individual type of head collectively and override the specific head prices, uncomment the comments below...
+  #all: 50
+  #allMobs: 50
+  #allBlocks: 50
+  #allBonus: 50
+  players:
+    percentage: 20
+    specificPlayer:
+      gogobebe2: 50
+      Notch: 100
+      Herobrine: 250
+  mobs:
+    Alex: 50
+    Blaze: 50
+    CaveSpider: 50
+    Chicken: 50
+    Cow: 50
+    Creeper: 50
+    Enderman: 50
+    Ghast: 50
+    Golem: 50
+    Herobrine: 50
+    LavaSlime: 50
+    MushroomCow: 50
+    Ocelot: 50
+    Pig: 50
+    PigZombie: 50
+    Sheep: 50
+    Skeleton: 50
+    Slime: 50
+    Spider: 50
+    Squid: 50
+    Steve: 50
+    Villager: 50
+    WSkeleton: 50
+    Zombie: 50
+  blocks:
+    Cactus: 50
+    Cake: 50
+    Chest: 50
+    CoconutB: 50
+    CoconutG: 50
+    Melon: 50
+    OakLog: 50
+    Present1: 50
+    Present2: 50
+    Pumpkin: 50
+    TNT: 50
+    TNT2: 50
+  bonus:
+    ArrowUp: 50
+    ArrowDown: 50
+    ArrowLeft: 50
+    ArrowRight: 50
+    Exclamation: 50
+    Question: 50
