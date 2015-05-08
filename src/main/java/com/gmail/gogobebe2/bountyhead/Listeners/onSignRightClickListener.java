@@ -71,7 +71,7 @@ public class onSignRightClickListener implements Listener {
         if (skull.hasOwner()) {
             head = skull.getOwner();
         } else {
-            head = "Unknown";
+            head = skull.getDisplayName();
         }
         HeadType headType = getHeadType(head);
         if (plugin.getConfig().isSet("prices.all")) {
