@@ -165,7 +165,7 @@ public class onBountyHeadSignUseListener implements Listener {
         inventory.setItem(slot, item);
         player.updateInventory();
         player.sendMessage(ChatColor.BLUE + "Sold "
-                + (IS_SNEAKING ? " " + ChatColor.DARK_GREEN + ChatColor.BOLD + AMOUNT : "a ") + ChatColor.DARK_GREEN
+                + (IS_SNEAKING ? ChatColor.DARK_GREEN + "" + ChatColor.BOLD + AMOUNT : "a") + " " + ChatColor.DARK_GREEN
                 + ChatColor.ITALIC + SKULL_OWNER + ChatColor.BLUE + (IS_SNEAKING ? " heads " : " head") + " for "
                 + ChatColor.DARK_GREEN + ChatColor.BOLD + plugin.getConfig().getString("currencySymbol") + price
                 + ChatColor.BLUE + ".");
