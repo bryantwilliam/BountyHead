@@ -39,13 +39,16 @@ public class onBountyHeadSignUseListener implements Listener {
         Player player = event.getPlayer();
         if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
             if (BountyHead.isHeadSign(event.getClickedBlock())) {
-                // TODO: check permission.
-                if (!player.getInventory().contains(Material.SKULL_ITEM, 1)) {
-                    player.sendMessage(ChatColor.RED + "Oops! You don't have any heads in your inventory!");
-                } else {
-                    sellSkull(player);
+                if (player.hasPermission("bountyhead.usesign")) {
+                    if (!player.getInventory().contains(Material.SKULL_ITEM, 1)) {
+                        player.sendMessage(ChatColor.RED + "Oops! You don't have any heads in your inventory!");
+                    } else {
+                        sellSkull(player);
+                    }
                 }
-
+                else {
+                    player.sendMessage(ChatColor.RED + "Error! You do not have permission to use head signs!");
+                }
             }
         }
     }

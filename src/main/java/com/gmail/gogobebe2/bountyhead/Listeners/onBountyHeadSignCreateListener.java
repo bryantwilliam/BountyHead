@@ -15,10 +15,15 @@ public class onBountyHeadSignCreateListener implements Listener {
         String[] lines = event.getLines();
         // TODO: check for permission.
         if (lines[0].equalsIgnoreCase("[sell]") && lines[1].equalsIgnoreCase("head")) {
-            event.setLine(0, ChatColor.DARK_BLUE + " [Sell] ");
-            event.setLine(1, " Head ");
             Player player = event.getPlayer();
-            player.sendMessage(ChatColor.GREEN + "Head selling sign created!");
+            if (player.hasPermission("bountyhead.makesign")) {
+                event.setLine(0, ChatColor.DARK_BLUE + " [Sell] ");
+                event.setLine(1, " Head ");
+                player.sendMessage(ChatColor.GREEN + "Head selling sign created!");
+            }
+            else {
+                player.sendMessage(ChatColor.RED + "Error! You do not have permission to create head signs!");
+            }
         }
     }
 }
