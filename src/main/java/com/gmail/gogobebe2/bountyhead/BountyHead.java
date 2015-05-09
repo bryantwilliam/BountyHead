@@ -79,8 +79,13 @@ public class BountyHead extends JavaPlugin {
                         amount = Double.parseDouble(arguments[1]);
                     }
                     catch (NumberFormatException exc) {
-                        player.sendMessage(ChatColor.RED + "Error! " + arguments[1] + " is not a number!");
+                        player.sendMessage(ChatColor.RED + "Error! " + ChatColor.GOLD + arguments[1] + ChatColor.RED + " is not a number!");
                         return true;
+                    }
+
+                    if (amount <= 0) {
+                        player.sendMessage(ChatColor.RED + "Error! You cannot place a bounty of " + ChatColor.GOLD
+                                + amount + ChatColor.RED + " on a player's head!");
                     }
 
                     economy.withdrawPlayer(player, amount);
