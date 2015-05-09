@@ -151,6 +151,7 @@ public class onBountyHeadSignUseListener implements Listener {
             throw new NullPointerException("Null pointer exception! There are no items in the player's inventory that have the Material of Material.SKULL_ITEM");
         }
         ItemStack item = inventory.getItem(slot);
+        final String SKULL_OWNER = getSkullOwner(item);
         double price = getSkullPrice(item);
         if (IS_SNEAKING) {
             AMOUNT = item.getAmount();
@@ -164,7 +165,7 @@ public class onBountyHeadSignUseListener implements Listener {
         inventory.setItem(slot, item);
         player.updateInventory();
         player.sendMessage(ChatColor.BLUE + "Sold " + ChatColor.DARK_GREEN + ChatColor.BOLD
-                + (IS_SNEAKING ? AMOUNT : "a ") + getSkullOwner(item) + (IS_SNEAKING ? "heads " : "head") + " for"
+                + (IS_SNEAKING ? AMOUNT : "a ") + SKULL_OWNER + (IS_SNEAKING ? " heads " : " head") + " for "
                 + ChatColor.DARK_GREEN + ChatColor.BOLD + plugin.getConfig().getString("currencySymbol") + price
                 + ChatColor.BLUE + ".");
     }
