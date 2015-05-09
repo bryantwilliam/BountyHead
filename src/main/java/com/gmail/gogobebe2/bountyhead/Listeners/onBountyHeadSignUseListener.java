@@ -109,8 +109,8 @@ public class onBountyHeadSignUseListener implements Listener {
             } else {
                 double balance;
                 try {
-                    BountyHead.economy.getBalance(Bukkit.getOfflinePlayer(head));
-                    balance = 1;
+                    //noinspection deprecation
+                    balance = BountyHead.economy.getBalance(Bukkit.getOfflinePlayer(head));
                 } catch (NullPointerException exc) {
                     balance = 1;
                 }
