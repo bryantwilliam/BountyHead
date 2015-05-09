@@ -1,4 +1,3 @@
-currencySymbol: '$'
 prices:
   # To set prices of each individual type of head collectively and override the specific head prices, uncomment the comments below...
   #all: 50

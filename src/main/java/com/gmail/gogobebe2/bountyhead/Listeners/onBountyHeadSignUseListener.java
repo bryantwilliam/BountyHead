@@ -15,6 +15,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.SkullMeta;
 
+import java.text.NumberFormat;
+
 public class onBountyHeadSignUseListener implements Listener {
     BountyHead plugin;
 
@@ -160,6 +162,9 @@ public class onBountyHeadSignUseListener implements Listener {
         }
         price *= AMOUNT;
 
+        NumberFormat formatter = NumberFormat.getCurrencyInstance();
+        String moneyString = formatter.format(price);
+
         BountyHead.economy.depositPlayer(player, price);
         item.setAmount(item.getAmount() - AMOUNT);
         inventory.setItem(slot, item);
@@ -167,8 +172,7 @@ public class onBountyHeadSignUseListener implements Listener {
         player.sendMessage(ChatColor.BLUE + "Sold "
                 + (IS_SNEAKING ? ChatColor.DARK_GREEN + "" + ChatColor.BOLD + AMOUNT : "a") + " " + ChatColor.DARK_GREEN
                 + ChatColor.ITALIC + SKULL_OWNER + ChatColor.BLUE + (IS_SNEAKING ? " heads " : " head") + " for "
-                + ChatColor.DARK_GREEN + ChatColor.BOLD + plugin.getConfig().getString("currencySymbol") + price
-                + ChatColor.BLUE + ".");
+                + ChatColor.DARK_GREEN + moneyString + ChatColor.BLUE + ".");
     }
 }
 
