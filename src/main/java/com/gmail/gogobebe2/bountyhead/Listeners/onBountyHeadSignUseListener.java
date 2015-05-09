@@ -55,19 +55,16 @@ public class onBountyHeadSignUseListener implements Listener {
             owner = owner.replaceFirst("MHF_", "");
         }
         for (String headName : plugin.getConfig().getConfigurationSection("prices.mobs").getKeys(false)) {
-            plugin.getLogger().severe("DEBUG: headname: prices.mobs." + headName + " owner: " + owner);
             if (headName.equalsIgnoreCase(owner)) {
                 return HeadType.MOB;
             }
         }
         for (String headName : plugin.getConfig().getConfigurationSection("prices.blocks").getKeys(false)) {
-            plugin.getLogger().severe("DEBUG: headname: prices.blocks." + headName + " owner: " + owner);
             if (headName.equalsIgnoreCase(owner)) {
                 return HeadType.BLOCK;
             }
         }
         for (String headName : plugin.getConfig().getConfigurationSection("prices.bonus").getKeys(false)) {
-            plugin.getLogger().severe("DEBUG: headname: prices.bonus." + headName + " owner: " + owner);
             if (headName.equalsIgnoreCase(owner)) {
                 return HeadType.BONUS;
             }
@@ -164,8 +161,8 @@ public class onBountyHeadSignUseListener implements Listener {
         item.setAmount(item.getAmount() - AMOUNT);
         inventory.setItem(slot, item);
         player.updateInventory();
-        player.sendMessage(ChatColor.GREEN + "Sold " + ChatColor.BOLD + AMOUNT + ChatColor.GREEN + ChatColor.BOLD
-                + ((AMOUNT == 1) ? " head " : " heads for ") + plugin.getConfig().getString("currencySymbol") + price + ChatColor.GREEN + ".");
+        player.sendMessage(ChatColor.BLUE + "Sold " + ChatColor.DARK_GREEN + ChatColor.BOLD + AMOUNT + ChatColor.BLUE
+                + ((AMOUNT == 1) ? " head " : " heads") +  " for " + ChatColor.DARK_GREEN + ChatColor.BOLD + plugin.getConfig().getString("currencySymbol") + price + ChatColor.BLUE + ".");
     }
 }
 
