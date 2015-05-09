@@ -7,7 +7,7 @@ prices:
   #allBonus: 50
   players:
     percentage: 20
-    specificPlayer:
+    specificPlayers:
       gogobebe2: 40
       Notch: 100
       Herobrine: 250

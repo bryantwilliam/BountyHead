@@ -103,8 +103,8 @@ public class onBountyHeadSignUseListener implements Listener {
         } else if (plugin.getConfig().isSet("prices.allBonus") && headType.equals(HeadType.BONUS)) {
             return plugin.getConfig().getDouble("prices.allBonus");
         } else if (headType.equals(HeadType.PLAYER)) {
-            if (plugin.getConfig().isSet("prices.players.specificPlayer." + head)) {
-                return plugin.getConfig().getDouble("prices.players.specificPlayer." + head);
+            if (plugin.getConfig().isSet("prices.players.specificPlayers." + head)) {
+                return plugin.getConfig().getDouble("prices.players.specificPlayers." + head);
             } else {
                 double balance;
                 try {
