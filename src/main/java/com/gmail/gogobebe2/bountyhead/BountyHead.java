@@ -27,6 +27,12 @@ public class BountyHead extends JavaPlugin {
     }
 
     @Override
+    public void onDisable() {
+        reloadConfig();
+        saveConfig();
+    }
+
+    @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         // TODO: commands.
         return false;

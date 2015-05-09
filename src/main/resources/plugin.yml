@@ -1,10 +1,10 @@
 name: BountyHead
-version: 1.4.2-DEVELOPMENT-SNAPSHOT
+version: 1.4.3-DEVELOPMENT-SNAPSHOT
 main: com.gmail.gogobebe2.bountyhead.BountyHead
 description: Head economy and monopoly.
 author: William Bryant (gogobebe2)
 website: gogobebe2@gmail.com
-depend: Vault
+depend: [Vault]
 commands:
   bountyhead:
     description: BountyHead main help command.
