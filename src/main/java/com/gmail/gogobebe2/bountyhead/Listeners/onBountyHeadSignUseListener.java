@@ -23,7 +23,7 @@ public class onBountyHeadSignUseListener implements Listener {
     }
 
 
-    @EventHandler (priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onHeadPlace(BlockPlaceEvent event) {
         if (event.isCancelled()) return;
         if (event.getBlockPlaced().getType().equals(Material.SKULL) && BountyHead.isHeadSign(event.getBlockAgainst())) {
@@ -43,8 +43,7 @@ public class onBountyHeadSignUseListener implements Listener {
                     } else {
                         sellSkull(player);
                     }
-                }
-                else {
+                } else {
                     player.sendMessage(ChatColor.RED + "Error! You do not have permission to use head signs!");
                 }
             }
@@ -74,7 +73,7 @@ public class onBountyHeadSignUseListener implements Listener {
         return HeadType.PLAYER;
     }
 
-    private double getSkullPrice(ItemStack skull) {
+    private String getSkullOwner(ItemStack skull) {
         SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
         String head;
         if (skullMeta.hasOwner()) {
@@ -88,12 +87,17 @@ public class onBountyHeadSignUseListener implements Listener {
         } else if (skull.getDurability() == 2) {
             head = "Zombie";
         } else if (skull.getDurability() == 3) {
-            head = "Head";
+            head = "Steve";
         } else if (skull.getDurability() == 4) {
             head = "Creeper";
         } else {
             head = "Unknown";
         }
+        return head;
+    }
+
+    private double getSkullPrice(ItemStack skull) {
+        String head = getSkullOwner(skull);
         HeadType headType = getHeadType(head);
         if (plugin.getConfig().isSet("prices.all")) {
             return plugin.getConfig().getDouble("prices.all");
@@ -159,8 +163,10 @@ public class onBountyHeadSignUseListener implements Listener {
         item.setAmount(item.getAmount() - AMOUNT);
         inventory.setItem(slot, item);
         player.updateInventory();
-        player.sendMessage(ChatColor.BLUE + "Sold " + ChatColor.DARK_GREEN + ChatColor.BOLD + AMOUNT + ChatColor.BLUE
-                + ((AMOUNT == 1) ? " head " : " heads") +  " for " + ChatColor.DARK_GREEN + ChatColor.BOLD + plugin.getConfig().getString("currencySymbol") + price + ChatColor.BLUE + ".");
+        player.sendMessage(ChatColor.BLUE + "Sold " + ChatColor.DARK_GREEN + ChatColor.BOLD
+                + (IS_SNEAKING ? AMOUNT : "a ") + getSkullOwner(item) + (IS_SNEAKING ? "heads " : "head") + " for"
+                + ChatColor.DARK_GREEN + ChatColor.BOLD + plugin.getConfig().getString("currencySymbol") + price
+                + ChatColor.BLUE + ".");
     }
 }
 
