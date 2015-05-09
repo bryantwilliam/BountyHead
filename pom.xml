@@ -6,7 +6,7 @@
 
     <groupId>com.gmail.gogobebe2.bountyhead</groupId>
     <artifactId>BountyHead</artifactId>
-    <version>1.3.1-DEVELOPMENT-SNAPSHOT</version>
+    <version>1.4.0-DEVELOPMENT-SNAPSHOT</version>
 
     <build>
         <pluginManagement>
@@ -28,20 +28,21 @@
             <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
         </repository>
         <repository>
-            <id>ess-repo</id>
-            <url>http://repo.ess3.net/content/groups/essentials</url>
+            <id>vault-repo</id>
+            <url>http://nexus.theyeticave.net/content/repositories/pub_releases</url>
         </repository>
     </repositories>
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.8.3-R0.1-SNAPSHOT</version>
+            <version>LATEST</version>
         </dependency>
         <dependency>
-            <groupId>net.ess3</groupId>
-            <artifactId>Essentials</artifactId>
-            <version>Pre2.13.1.7</version>
+            <groupId>net.milkbowl.vault</groupId>
+            <artifactId>VaultAPI</artifactId>
+            <version>1.5</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

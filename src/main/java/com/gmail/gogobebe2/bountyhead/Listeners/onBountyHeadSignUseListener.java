@@ -1,7 +1,7 @@
 package com.gmail.gogobebe2.bountyhead.Listeners;
 
 import com.gmail.gogobebe2.bountyhead.BountyHead;
-import net.ess3.api.MaxMoneyException;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -14,8 +14,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.SkullMeta;
-
-import java.math.BigDecimal;
 
 public class onBountyHeadSignUseListener implements Listener {
     BountyHead plugin;
@@ -111,7 +109,8 @@ public class onBountyHeadSignUseListener implements Listener {
             } else {
                 double balance;
                 try {
-                    balance = BountyHead.getEss3().getUser(head).getMoney().doubleValue();
+                    BountyHead.economy.getBalance(Bukkit.getOfflinePlayer(head));
+                    balance = 1;
                 } catch (NullPointerException exc) {
                     balance = 1;
                 }
@@ -156,11 +155,7 @@ public class onBountyHeadSignUseListener implements Listener {
         }
         price *= AMOUNT;
 
-        try {
-            BountyHead.getEss3().getUser(player).giveMoney(BigDecimal.valueOf(price));
-        } catch (MaxMoneyException e) {
-            player.sendMessage(ChatColor.DARK_RED + "Error! Max money limit reached! Please report this error to the server administrator!");
-        }
+        BountyHead.economy.depositPlayer(player, price);
         item.setAmount(item.getAmount() - AMOUNT);
         inventory.setItem(slot, item);
         player.updateInventory();

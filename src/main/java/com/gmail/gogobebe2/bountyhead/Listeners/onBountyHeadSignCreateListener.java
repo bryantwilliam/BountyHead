@@ -13,7 +13,6 @@ public class onBountyHeadSignCreateListener implements Listener {
     public void onSignChange(SignChangeEvent event) {
         if (event.isCancelled()) return;
         String[] lines = event.getLines();
-        // TODO: check for permission.
         if (lines[0].equalsIgnoreCase("[sell]") && lines[1].equalsIgnoreCase("head")) {
             Player player = event.getPlayer();
             if (player.hasPermission("bountyhead.makesign")) {
