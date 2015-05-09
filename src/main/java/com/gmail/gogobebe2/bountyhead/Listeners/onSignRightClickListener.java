@@ -10,8 +10,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import java.math.BigDecimal;
@@ -73,23 +73,17 @@ public class onSignRightClickListener implements Listener {
             head = skullMeta.getOwner();
         } else if (skullMeta.hasDisplayName()) {
             head = skullMeta.getDisplayName();
-        }
-        else if (skull.getDurability() == 0){
+        } else if (skull.getDurability() == 0) {
             head = "Skeleton";
-        }
-        else if (skull.getDurability() == 1) {
+        } else if (skull.getDurability() == 1) {
             head = "WSkeleton";
-        }
-        else if (skull.getDurability() == 2) {
+        } else if (skull.getDurability() == 2) {
             head = "Zombie";
-        }
-        else if (skull.getDurability() == 3) {
+        } else if (skull.getDurability() == 3) {
             head = "Head";
-        }
-        else if (skull.getDurability() == 4) {
+        } else if (skull.getDurability() == 4) {
             head = "Creeper";
-        }
-        else {
+        } else {
             head = "Unknown";
         }
         HeadType headType = getHeadType(head);
@@ -131,10 +125,15 @@ public class onSignRightClickListener implements Listener {
 
 
     private void sellSkull(Player player) {
-        Inventory inventory = player.getInventory();
+        PlayerInventory inventory = player.getInventory();
         final boolean IS_SNEAKING = player.isSneaking();
         final int AMOUNT;
-        int slot = inventory.first(Material.SKULL_ITEM);
+        int slot;
+        if (inventory.getItemInHand() != null && inventory.getItemInHand().getType().equals(Material.SKULL_ITEM)) {
+            slot = inventory.getHeldItemSlot();
+        } else {
+            slot = inventory.first(Material.SKULL_ITEM);
+        }
         if (slot == -1) {
             throw new NullPointerException("Null pointer exception! There are no items in the player's inventory that have the Material of Material.SKULL_ITEM");
         }
