@@ -1,8 +1,8 @@
 package com.gmail.gogobebe2.bountyhead;
 
 import com.earth2me.essentials.Essentials;
-import com.gmail.gogobebe2.bountyhead.Listeners.onSignChangeListener;
-import com.gmail.gogobebe2.bountyhead.Listeners.onSignRightClickListener;
+import com.gmail.gogobebe2.bountyhead.Listeners.onBountyHeadSignCreateListener;
+import com.gmail.gogobebe2.bountyhead.Listeners.onBountyHeadSignUseListener;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -19,8 +19,8 @@ public class BountyHead extends JavaPlugin {
         getConfig().options().copyDefaults(true);
         saveDefaultConfig();
         ess3 = (Essentials)getServer().getPluginManager().getPlugin("Essentials");
-        getServer().getPluginManager().registerEvents(new onSignChangeListener(), this);
-        getServer().getPluginManager().registerEvents(new onSignRightClickListener(this), this);
+        getServer().getPluginManager().registerEvents(new onBountyHeadSignCreateListener(), this);
+        getServer().getPluginManager().registerEvents(new onBountyHeadSignUseListener(this), this);
     }
 
     @Override

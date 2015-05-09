@@ -9,6 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -16,15 +17,24 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 import java.math.BigDecimal;
 
-public class onSignRightClickListener implements Listener {
+public class onBountyHeadSignUseListener implements Listener {
     BountyHead plugin;
 
-    public onSignRightClickListener(BountyHead plugin) {
+    public onBountyHeadSignUseListener(BountyHead plugin) {
         this.plugin = plugin;
     }
 
+
+    @EventHandler (priority = EventPriority.NORMAL)
+    public void onHeadPlace(BlockPlaceEvent event) {
+        if (event.isCancelled()) return;
+        if (event.getBlockPlaced().getType().equals(Material.SKULL) && BountyHead.isHeadSign(event.getBlockAgainst())) {
+            event.setCancelled(true);
+        }
+    }
+
     @EventHandler(priority = EventPriority.NORMAL)
-    public void onSign(PlayerInteractEvent event) {
+    public void onSignRightClick(PlayerInteractEvent event) {
         if (event.isCancelled()) return;
         Player player = event.getPlayer();
         if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
