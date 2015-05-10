@@ -44,7 +44,7 @@ public class BountyHead extends JavaPlugin {
         reloadConfig();
         reloadBountiesConfig();
         saveConfig();
-        saveBountiesDefaultConfig();
+        saveBountiesConfig();
     }
 
     @Override
@@ -112,7 +112,7 @@ public class BountyHead extends JavaPlugin {
 
                     getBountiesConfig().set("bounties." + target.getName(), amount);
 
-                    saveBountiesDefaultConfig();
+                    saveBountiesConfig();
 
                     for (Player p : Bukkit.getOnlinePlayers()) {
                         //noinspection deprecation
