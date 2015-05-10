@@ -146,14 +146,15 @@ public class BountyHead extends JavaPlugin {
                         player.sendMessage(ChatColor.RED + "Error! You never placed a bounty on " + target.getName() + "!");
                         return true;
                     }
-                    double amount = getBountiesConfig().getDouble("bounties." + target.getName() + ".totalamount") - getBountiesConfig().getDouble("bounties." + target.getName() + ".placers." + uuid);
-                    getBountiesConfig().set("bounties." + target.getName() + ".totalamount", amount);
+                    double amount = getBountiesConfig().getDouble("bounties." + target.getName() + ".placers." + uuid);
+                    double totalamount = getBountiesConfig().getDouble("bounties." + target.getName() + ".totalamount") - amount;
+                    getBountiesConfig().set("bounties." + target.getName() + ".totalamount", totalamount);
                     getBountiesConfig().set("bounties." + target.getName() + ".placers." + uuid, null);
                     if (amount == 0) {
                         getBountiesConfig().set("bounties." + target.getName() + ".totalamount", null);
                     }
                     saveBountiesConfig();
-                    player.sendMessage(target.getName() + "'s bounty of ");
+                    player.sendMessage(ChatColor.LIGHT_PURPLE + target.getName() + "'s bounty of " + amount + " removed!");
                     return true;
                 }
             }
