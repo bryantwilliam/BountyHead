@@ -45,9 +45,12 @@ public class BountyHead extends JavaPlugin {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (label.equalsIgnoreCase("bountyhead") || (label.equalsIgnoreCase("bounty")) || label.equalsIgnoreCase("bh")) {
-            if (args.length != 0) {
+            if (args.length > 0) {
                 String subCommand = args[0];
-                String[] arguments = Arrays.copyOfRange(args, 1, args.length - 1);
+                String[] arguments = {};
+                if (args.length >= 1) {
+                    arguments = Arrays.copyOfRange(args, 1, args.length);
+                }
                 if ((subCommand.equalsIgnoreCase("sellhead") || args[0].equalsIgnoreCase("sh")) && checkPermission(sender, "bountyhead.sellhead")) {
                     if (!(sender instanceof Player)) {
                         sender.sendMessage(ChatColor.RED + "Error! You have to be a player to use this command!");
@@ -72,6 +75,7 @@ public class BountyHead extends JavaPlugin {
                     if (arguments.length < 2) {
                         player.sendMessage(ChatColor.RED + "Error! Wrong usage! Type " + ChatColor.GOLD
                                 + "/bh p <player> <money>" + ChatColor.RED + " to place a bounty on a player head.");
+                        return true;
                     }
                     String target = arguments[0];
                     double amount;
@@ -86,18 +90,19 @@ public class BountyHead extends JavaPlugin {
                     if (amount <= 0) {
                         player.sendMessage(ChatColor.RED + "Error! You cannot place a bounty of " + ChatColor.GOLD
                                 + amount + ChatColor.RED + " on a player's head!");
+                        return true;
                     }
 
                     economy.withdrawPlayer(player, amount);
 
                     //TODO: add target and the amount to a list in a txt file.
-                    for (Player p : Bukkit.getOnlinePlayers()) {
-                        p.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + player.getDisplayName() + ChatColor.GOLD
-                                + " placed bounty of " + ChatColor.BOLD + formatMoney(amount) + " on " + ChatColor.GOLD
-                                + ChatColor.BOLD + target + ChatColor.GOLD + "'s head.");
-                        p.sendMessage(ChatColor.YELLOW + "" + ChatColor.ITALIC + "Someone kill him!");
-                    }
-                    return true;
+                        for (Player p : Bukkit.getOnlinePlayers()) {
+                            p.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + player.getName() + ChatColor.GOLD
+                                    + " placed bounty of " + ChatColor.DARK_PURPLE + ChatColor.BOLD + formatMoney(amount) + ChatColor.GOLD + " on "
+                                    + ChatColor.BOLD + Bukkit.getOfflinePlayer(target).getName() + ChatColor.GOLD + "'s head.");
+                            p.sendMessage(ChatColor.YELLOW + "" + ChatColor.ITALIC + "Someone kill him!");
+                        }
+                        return true;
                 }
                 else if ((subCommand.equalsIgnoreCase("removebounty") || subCommand.equalsIgnoreCase("r")) && checkPermission(sender, "bountyhead.placebounty")) {
                     if (!(sender instanceof Player)) {
@@ -107,7 +112,8 @@ public class BountyHead extends JavaPlugin {
                     Player player = (Player) sender;
                     if (arguments.length != 1) {
                         player.sendMessage(ChatColor.RED + "Error! Wrong usage! Type " + ChatColor.GOLD
-                                + "/bh r <player> <money>" + ChatColor.RED + " to remove a bounty from a player's head.");
+                                + "/bh r <player>" + ChatColor.RED + " to remove a bounty from a player's head.");
+                        return true;
                     }
                     String target = arguments[0];
                     //TODO: find the amount matching the target, give the player back his money, then remove the data of the target.
@@ -120,8 +126,8 @@ public class BountyHead extends JavaPlugin {
 
     private void showCommandUsage(CommandSender sender, String permission, String subCommand, String description) {
         if (sender.hasPermission(permission)) {
-            sender.sendMessage(ChatColor.BLUE + "" + ChatColor.ITALIC + "  /bountyhead " + ChatColor.BLUE + subCommand + ChatColor.DARK_PURPLE
-                    + " - " + description);
+            sender.sendMessage(ChatColor.BLUE + " - " + ChatColor.BOLD + "/bountyhead " + ChatColor.BLUE + subCommand);
+            sender.sendMessage(ChatColor.DARK_PURPLE + "" + ChatColor.ITALIC + description);
         }
     }
 
