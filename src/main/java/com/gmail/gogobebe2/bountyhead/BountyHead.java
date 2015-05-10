@@ -271,7 +271,9 @@ public class BountyHead extends JavaPlugin {
                 }
                 price *= AMOUNT;
 
-                BountyHead.economy.depositPlayer(player, price);
+                economy.depositPlayer(player, price);
+                //noinspection deprecation
+                economy.withdrawPlayer(SKULL_OWNER, price);
                 item.setAmount(item.getAmount() - AMOUNT);
                 inventory.setItem(slot, item);
                 player.updateInventory();
