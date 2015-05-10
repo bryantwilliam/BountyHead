@@ -98,6 +98,11 @@ public class BountyHead extends JavaPlugin {
                         return true;
                     }
 
+                    if (amount > economy.getBalance(player)) {
+                        player.sendMessage(ChatColor.RED + "Error! Insufficient funds!");
+                        return true;
+                    }
+
                     economy.withdrawPlayer(player, amount);
 
                     double totalAmount = amount;
@@ -304,8 +309,9 @@ public class BountyHead extends JavaPlugin {
                     AMOUNT = 1;
                 }
                 price *= AMOUNT;
+                double bounty = 0;
                 if (getBountiesConfig().isSet("bounties." + SKULL_OWNER + ".totalamount")) {
-                    double bounty = getBountiesConfig().getDouble("bounties." + SKULL_OWNER + ".totalamount");
+                    bounty = getBountiesConfig().getDouble("bounties." + SKULL_OWNER + ".totalamount");
                     for (Player p : Bukkit.getOnlinePlayers()) {
                         StringBuilder message = new StringBuilder();
                         message.append(ChatColor.GOLD).append(SKULL_OWNER).append("'s head has been sold and ")
@@ -329,14 +335,15 @@ public class BountyHead extends JavaPlugin {
                         }
                         p.sendMessage(message.toString());
                     }
-                    price += bounty;
                     getBountiesConfig().set("bounties." + SKULL_OWNER, null);
                     saveBountiesConfig();
                 }
 
-                economy.depositPlayer(player, price);
                 //noinspection deprecation
                 economy.withdrawPlayer(SKULL_OWNER, price);
+                price += bounty;
+                economy.depositPlayer(player, price);
+
                 item.setAmount(item.getAmount() - AMOUNT);
                 inventory.setItem(slot, item);
                 player.updateInventory();
