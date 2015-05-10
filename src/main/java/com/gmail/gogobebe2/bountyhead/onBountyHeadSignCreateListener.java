@@ -1,4 +1,4 @@
-package com.gmail.gogobebe2.bountyhead.Listeners;
+package com.gmail.gogobebe2.bountyhead;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -19,8 +19,7 @@ public class onBountyHeadSignCreateListener implements Listener {
                 event.setLine(0, ChatColor.DARK_BLUE + " [Sell] ");
                 event.setLine(1, " Head ");
                 player.sendMessage(ChatColor.GREEN + "Head selling sign created!");
-            }
-            else {
+            } else {
                 player.sendMessage(ChatColor.RED + "Error! You do not have permission to create head signs!");
             }
         }

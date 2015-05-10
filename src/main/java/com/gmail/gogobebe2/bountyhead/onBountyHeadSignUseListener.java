@@ -1,6 +1,5 @@
-package com.gmail.gogobebe2.bountyhead.Listeners;
+package com.gmail.gogobebe2.bountyhead;
 
-import com.gmail.gogobebe2.bountyhead.BountyHead;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -21,7 +20,7 @@ public class onBountyHeadSignUseListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onHeadPlace(BlockPlaceEvent event) {
         if (event.isCancelled()) return;
-        if (event.getBlockPlaced().getType().equals(Material.SKULL) && BountyHead.isHeadSign(event.getBlockAgainst())) {
+        if (event.getBlockPlaced().getType().equals(Material.SKULL) && Utils.isHeadSign(event.getBlockAgainst())) {
             event.setCancelled(true);
         }
     }
@@ -31,19 +30,10 @@ public class onBountyHeadSignUseListener implements Listener {
         if (event.isCancelled()) return;
         Player player = event.getPlayer();
         if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-            if (BountyHead.isHeadSign(event.getClickedBlock())) {
+            if (Utils.isHeadSign(event.getClickedBlock())) {
                 plugin.sellSkull(player);
             }
         }
     }
-
-
-
-
-
-
-
-
-
 }
 

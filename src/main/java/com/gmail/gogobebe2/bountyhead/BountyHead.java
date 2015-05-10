@@ -1,16 +1,14 @@
 package com.gmail.gogobebe2.bountyhead;
 
-import com.gmail.gogobebe2.bountyhead.Listeners.HeadType;
-import com.gmail.gogobebe2.bountyhead.Listeners.onBountyHeadSignCreateListener;
-import com.gmail.gogobebe2.bountyhead.Listeners.onBountyHeadSignUseListener;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.Sign;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -18,11 +16,15 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.text.NumberFormat;
+import java.io.*;
 import java.util.Arrays;
+import java.util.UUID;
+import java.util.logging.Level;
 
 public class BountyHead extends JavaPlugin {
     public static Economy economy = null;
+    private FileConfiguration bountiesConfig = null;
+    private File bountiesConfigFile = null;
 
     @Override
     public void onEnable() {
@@ -59,14 +61,12 @@ public class BountyHead extends JavaPlugin {
                     Player player = (Player) sender;
                     sellSkull(player);
                     return true;
-                }
-                else if (subCommand.equalsIgnoreCase("reload") && checkPermission(sender, "bountyhead.reload")) {
+                } else if (subCommand.equalsIgnoreCase("reload") && checkPermission(sender, "bountyhead.reload")) {
                     reloadConfig();
                     saveConfig();
                     sender.sendMessage(ChatColor.GREEN + "Config files reloaded!");
                     return true;
-                }
-                else if ((subCommand.equalsIgnoreCase("placebounty") || subCommand.equalsIgnoreCase("p")) && checkPermission(sender, "bountyhead.placebounty")) {
+                } else if ((subCommand.equalsIgnoreCase("placebounty") || subCommand.equalsIgnoreCase("p")) && checkPermission(sender, "bountyhead.placebounty")) {
                     if (!(sender instanceof Player)) {
                         sender.sendMessage(ChatColor.RED + "Error! You have to be a player to use this command!");
                         return true;
@@ -77,12 +77,11 @@ public class BountyHead extends JavaPlugin {
                                 + "/bh p <player> <money>" + ChatColor.RED + " to place a bounty on a player head.");
                         return true;
                     }
-                    String target = arguments[0];
+                    OfflinePlayer target = Bukkit.getOfflinePlayer(arguments[0]);
                     double amount;
                     try {
                         amount = Double.parseDouble(arguments[1]);
-                    }
-                    catch (NumberFormatException exc) {
+                    } catch (NumberFormatException exc) {
                         player.sendMessage(ChatColor.RED + "Error! " + ChatColor.GOLD + arguments[1] + ChatColor.RED + " is not a number!");
                         return true;
                     }
@@ -95,17 +94,34 @@ public class BountyHead extends JavaPlugin {
 
                     economy.withdrawPlayer(player, amount);
 
-                    //TODO: add target and the amount to a list in a txt file.
-                        for (Player p : Bukkit.getOnlinePlayers()) {
-                            //noinspection deprecation
-                            p.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + player.getName() + ChatColor.GOLD
-                                    + " placed bounty of " + ChatColor.DARK_PURPLE + ChatColor.BOLD + formatMoney(amount) + ChatColor.GOLD + " on "
-                                    + ChatColor.BOLD + Bukkit.getOfflinePlayer(target).getName() + ChatColor.GOLD + "'s head.");
-                            p.sendMessage(ChatColor.YELLOW + "" + ChatColor.ITALIC + "Someone kill him!");
+                    UUID uuid = player.getUniqueId();
+                    if (getBountiesConfig().isSet("bounties." + target.getName())) {
+                        if (getBountiesConfig().isSet("bounties." + target.getName() + ".placers." + uuid)) {
+                            getBountiesConfig().set("bounties." + target.getName() + ".placers." + uuid, getBountiesConfig().getDouble("bounties." + target.getName() + ".placers." + uuid) + amount);
                         }
-                        return true;
-                }
-                else if ((subCommand.equalsIgnoreCase("removebounty") || subCommand.equalsIgnoreCase("r")) && checkPermission(sender, "bountyhead.placebounty")) {
+                        else {
+                            getBountiesConfig().set("bounties." + target.getName() + ".placers." + player.getUniqueId(), amount);
+                        }
+                        player.sendMessage(ChatColor.AQUA + "You have added a bounty of " + amount + " to " + target.getName() + "'s head.");
+                        amount += getBountiesConfig().getDouble("bounties." + target.getName());
+                    }
+
+                    getBountiesConfig().set("bounties." + target.getName(), amount);
+
+                    saveConfig();
+
+                    for (Player p : Bukkit.getOnlinePlayers()) {
+                        //noinspection deprecation
+                        p.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + player.getName() + ChatColor.GOLD
+                                + " placed bounty of " + ChatColor.DARK_PURPLE + ChatColor.BOLD + Utils.formatMoney(amount) + ChatColor.GOLD + " on "
+                                + ChatColor.BOLD + target.getName() + ChatColor.GOLD + "'s head.");
+                        if (amount > 9000) {
+                            p.sendMessage(ChatColor.BLUE + "" + ChatColor.BOLD + "Holy shit! " + ChatColor.RED + target.getName() + "'s bounty has reached over 9000!!!!!!!!");
+                        }
+                        p.sendMessage(ChatColor.YELLOW + target.getName() + " has " + ChatColor.ITALIC + "Someone kill him!");
+                    }
+                    return true;
+                } else if ((subCommand.equalsIgnoreCase("removebounty") || subCommand.equalsIgnoreCase("r")) && checkPermission(sender, "bountyhead.placebounty")) {
                     if (!(sender instanceof Player)) {
                         sender.sendMessage(ChatColor.RED + "Error! You have to be a player to use this command!");
                         return true;
@@ -116,10 +132,24 @@ public class BountyHead extends JavaPlugin {
                                 + "/bh r <player>" + ChatColor.RED + " to remove a bounty from a player's head.");
                         return true;
                     }
-                    String target = arguments[0];
-                    //TODO: find the amount matching the target
-                    //TODO: give the player back his money
-                    //TODO: remove target and it's matching amount value from txt file.
+                    OfflinePlayer target = Bukkit.getOfflinePlayer(arguments[0]);
+                    if (!getBountiesConfig().isSet("bounties." + target.getName())) {
+                        player.sendMessage(ChatColor.RED + "Error! No player with the name " + target.getName() + " has a bounty on their head.");
+                        return true;
+                    }
+                    UUID uuid = player.getUniqueId();
+                    if (!getBountiesConfig().isSet(("bounties." + target.getName() + ".placers." + uuid))) {
+                        player.sendMessage(ChatColor.RED + "Error! You never placed a bounty on " + target.getName() + "!");
+                        return true;
+                    }
+                    double amount = getBountiesConfig().getDouble("bounties." + target.getName()) - getBountiesConfig().getDouble("bounties." + target.getName() + ".placers." + uuid);
+                    getBountiesConfig().set("bounties." + target.getName(),  amount);
+                    getBountiesConfig().set("bounties." + target.getName() + ".placers." + uuid, null);
+                    if (amount == 0) {
+                        getBountiesConfig().set("bounties." + target.getName(), null);
+                    }
+                    saveConfig();
+                    player.sendMessage(target.getName() + "'s bounty of ");
                     return true;
                 }
             }
@@ -241,10 +271,6 @@ public class BountyHead extends JavaPlugin {
         }
     }
 
-    private String formatMoney(double money) {
-        NumberFormat formatter = NumberFormat.getCurrencyInstance();
-        return formatter.format(money);
-    }
 
     public void sellSkull(Player player) {
         if (player.hasPermission("bountyhead.usesign")) {
@@ -272,6 +298,15 @@ public class BountyHead extends JavaPlugin {
                     AMOUNT = 1;
                 }
                 price *= AMOUNT;
+                if (getBountiesConfig().isSet("bounties." + SKULL_OWNER)) {
+                    price += getBountiesConfig().getDouble("bounties." + SKULL_OWNER);
+                    for (Player p : Bukkit.getOnlinePlayers()) {
+                        p.sendMessage(ChatColor.GOLD + SKULL_OWNER + "'s head has been sold for " + ChatColor.BOLD
+                                + Utils.formatMoney(price) + ChatColor.GOLD + "!");
+                    }
+                    getBountiesConfig().set("bounties." + SKULL_OWNER, null);
+                    saveConfig();
+                }
 
                 economy.depositPlayer(player, price);
                 //noinspection deprecation
@@ -282,23 +317,12 @@ public class BountyHead extends JavaPlugin {
                 player.sendMessage(ChatColor.BLUE + "Sold "
                         + (IS_SNEAKING ? ChatColor.DARK_GREEN + "" + ChatColor.BOLD + AMOUNT : "a") + " " + ChatColor.DARK_GREEN
                         + ChatColor.ITALIC + SKULL_OWNER + ChatColor.BLUE + (IS_SNEAKING ? " heads " : " head") + " for "
-                        + ChatColor.DARK_GREEN + formatMoney(price) + ChatColor.BLUE + ".");
+                        + ChatColor.DARK_GREEN + Utils.formatMoney(price) + ChatColor.BLUE + ".");
             }
         } else {
             player.sendMessage(ChatColor.RED + "Error! You do not have permission to use head signs!");
         }
-
     }
-
-    public static boolean isHeadSign(Block block) {
-        if (!(block.getState() instanceof Sign)) {
-            return false;
-        }
-        Sign sign = (Sign) block.getState();
-        String[] signLines = sign.getLines();
-        return signLines[0].equalsIgnoreCase(ChatColor.DARK_BLUE + " [Sell] ") && signLines[1].equalsIgnoreCase(" Head ");
-    }
-
 
     private boolean setupEconomy() {
         if (getServer().getPluginManager().getPlugin("Vault") == null) {
@@ -310,5 +334,57 @@ public class BountyHead extends JavaPlugin {
         }
         economy = rsp.getProvider();
         return economy != null;
+    }
+
+    @Override
+    public void reloadConfig() {
+        super.reloadConfig();
+        if (bountiesConfigFile == null) {
+            bountiesConfigFile = new File(getDataFolder(), "bounties.yml");
+        }
+        bountiesConfig = YamlConfiguration.loadConfiguration(bountiesConfigFile);
+
+        // Look for defaults in the jar
+        Reader defConfigStream = null;
+        try {
+            defConfigStream = new InputStreamReader(this.getResource("bounties.yml"), "UTF8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        if (defConfigStream != null) {
+            YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
+            bountiesConfig.setDefaults(defConfig);
+        }
+    }
+
+    @Override
+    public void saveDefaultConfig() {
+        super.saveDefaultConfig();
+            if (bountiesConfigFile == null) {
+                bountiesConfigFile = new File(getDataFolder(), "bounties.yml");
+            }
+            if (!bountiesConfigFile.exists()) {
+                saveResource("bounties.yml", false);
+            }
+    }
+
+    @Override
+    public void saveConfig() {
+        super.saveConfig();
+            if (bountiesConfig == null || bountiesConfigFile == null) {
+                return;
+            }
+            try {
+                getBountiesConfig().save(bountiesConfigFile);
+            } catch (IOException ex) {
+                getLogger().log(Level.SEVERE, "Could not save config to " + bountiesConfigFile, ex);
+            }
+    }
+
+    public FileConfiguration getBountiesConfig() {
+        if (bountiesConfig == null) {
+            reloadConfig();
+        }
+        return bountiesConfig;
     }
 }

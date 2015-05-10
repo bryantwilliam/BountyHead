@@ -6,7 +6,7 @@
 
     <groupId>com.gmail.gogobebe2.bountyhead</groupId>
     <artifactId>BountyHead</artifactId>
-    <version>1.6.1-DEVELOPMENT-SNAPSHOT</version>
+    <version>1.7.0-DEVELOPMENT-SNAPSHOT</version>
 
     <build>
         <pluginManagement>
