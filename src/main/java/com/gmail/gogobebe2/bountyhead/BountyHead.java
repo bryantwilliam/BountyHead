@@ -118,6 +118,7 @@ public class BountyHead extends JavaPlugin {
                     }
                     String target = arguments[0];
                     //TODO: find the amount matching the target, give the player back his money, then remove the data of the target.
+                    return true;
                 }
             }
             displayHelp(sender);
@@ -127,7 +128,7 @@ public class BountyHead extends JavaPlugin {
 
     private void showCommandUsage(CommandSender sender, String permission, String subCommand, String description) {
         if (sender.hasPermission(permission)) {
-            sender.sendMessage(ChatColor.BLUE + " - " + ChatColor.DARK_BLUE + ChatColor.BOLD + "/bountyhead " + ChatColor.AQUA + subCommand);
+            sender.sendMessage(ChatColor.BLUE + " - " + ChatColor.DARK_BLUE + ChatColor.BOLD + "/bh " + ChatColor.AQUA + subCommand);
             sender.sendMessage(ChatColor.DARK_PURPLE + "   " + ChatColor.ITALIC + description);
         }
     }
