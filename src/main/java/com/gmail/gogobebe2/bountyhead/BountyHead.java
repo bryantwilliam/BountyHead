@@ -330,7 +330,7 @@ public class BountyHead extends JavaPlugin {
                         p.sendMessage(message.toString());
                     }
                     price += bounty;
-                    getBountiesConfig().set("bounties." + SKULL_OWNER + ".totalamount", null);
+                    getBountiesConfig().set("bounties." + SKULL_OWNER, null);
                     saveBountiesConfig();
                 }
 
