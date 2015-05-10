@@ -34,6 +34,7 @@ public class BountyHead extends JavaPlugin {
         }
         getConfig().options().copyDefaults(true);
         saveDefaultConfig();
+        saveBountiesDefaultConfig();
         getServer().getPluginManager().registerEvents(new onBountyHeadSignCreateListener(), this);
         getServer().getPluginManager().registerEvents(new onBountyHeadSignUseListener(this), this);
     }
@@ -41,7 +42,9 @@ public class BountyHead extends JavaPlugin {
     @Override
     public void onDisable() {
         reloadConfig();
+        reloadBountiesConfig();
         saveConfig();
+        saveBountiesDefaultConfig();
     }
 
     @Override
@@ -63,7 +66,9 @@ public class BountyHead extends JavaPlugin {
                     return true;
                 } else if (subCommand.equalsIgnoreCase("reload") && checkPermission(sender, "bountyhead.reload")) {
                     reloadConfig();
+                    reloadBountiesConfig();
                     saveConfig();
+                    saveBountiesConfig();
                     sender.sendMessage(ChatColor.GREEN + "Config files reloaded!");
                     return true;
                 } else if ((subCommand.equalsIgnoreCase("placebounty") || subCommand.equalsIgnoreCase("p")) && checkPermission(sender, "bountyhead.placebounty")) {
@@ -77,7 +82,7 @@ public class BountyHead extends JavaPlugin {
                                 + "/bh p <player> <money>" + ChatColor.RED + " to place a bounty on a player head.");
                         return true;
                     }
-                    OfflinePlayer target = Bukkit.getOfflinePlayer(arguments[0]);
+                    @SuppressWarnings("deprecation") OfflinePlayer target = Bukkit.getOfflinePlayer(arguments[0]);
                     double amount;
                     try {
                         amount = Double.parseDouble(arguments[1]);
@@ -98,8 +103,7 @@ public class BountyHead extends JavaPlugin {
                     if (getBountiesConfig().isSet("bounties." + target.getName())) {
                         if (getBountiesConfig().isSet("bounties." + target.getName() + ".placers." + uuid)) {
                             getBountiesConfig().set("bounties." + target.getName() + ".placers." + uuid, getBountiesConfig().getDouble("bounties." + target.getName() + ".placers." + uuid) + amount);
-                        }
-                        else {
+                        } else {
                             getBountiesConfig().set("bounties." + target.getName() + ".placers." + player.getUniqueId(), amount);
                         }
                         player.sendMessage(ChatColor.AQUA + "You have added a bounty of " + amount + " to " + target.getName() + "'s head.");
@@ -108,7 +112,7 @@ public class BountyHead extends JavaPlugin {
 
                     getBountiesConfig().set("bounties." + target.getName(), amount);
 
-                    saveConfig();
+                    saveBountiesDefaultConfig();
 
                     for (Player p : Bukkit.getOnlinePlayers()) {
                         //noinspection deprecation
@@ -132,7 +136,7 @@ public class BountyHead extends JavaPlugin {
                                 + "/bh r <player>" + ChatColor.RED + " to remove a bounty from a player's head.");
                         return true;
                     }
-                    OfflinePlayer target = Bukkit.getOfflinePlayer(arguments[0]);
+                    @SuppressWarnings("deprecation") OfflinePlayer target = Bukkit.getOfflinePlayer(arguments[0]);
                     if (!getBountiesConfig().isSet("bounties." + target.getName())) {
                         player.sendMessage(ChatColor.RED + "Error! No player with the name " + target.getName() + " has a bounty on their head.");
                         return true;
@@ -143,12 +147,12 @@ public class BountyHead extends JavaPlugin {
                         return true;
                     }
                     double amount = getBountiesConfig().getDouble("bounties." + target.getName()) - getBountiesConfig().getDouble("bounties." + target.getName() + ".placers." + uuid);
-                    getBountiesConfig().set("bounties." + target.getName(),  amount);
+                    getBountiesConfig().set("bounties." + target.getName(), amount);
                     getBountiesConfig().set("bounties." + target.getName() + ".placers." + uuid, null);
                     if (amount == 0) {
                         getBountiesConfig().set("bounties." + target.getName(), null);
                     }
-                    saveConfig();
+                    saveBountiesConfig();
                     player.sendMessage(target.getName() + "'s bounty of ");
                     return true;
                 }
@@ -305,7 +309,7 @@ public class BountyHead extends JavaPlugin {
                                 + Utils.formatMoney(price) + ChatColor.GOLD + "!");
                     }
                     getBountiesConfig().set("bounties." + SKULL_OWNER, null);
-                    saveConfig();
+                    saveBountiesConfig();
                 }
 
                 economy.depositPlayer(player, price);
@@ -336,9 +340,7 @@ public class BountyHead extends JavaPlugin {
         return economy != null;
     }
 
-    @Override
-    public void reloadConfig() {
-        super.reloadConfig();
+    public void reloadBountiesConfig() {
         if (bountiesConfigFile == null) {
             bountiesConfigFile = new File(getDataFolder(), "bounties.yml");
         }
@@ -357,33 +359,29 @@ public class BountyHead extends JavaPlugin {
         }
     }
 
-    @Override
-    public void saveDefaultConfig() {
-        super.saveDefaultConfig();
-            if (bountiesConfigFile == null) {
-                bountiesConfigFile = new File(getDataFolder(), "bounties.yml");
-            }
-            if (!bountiesConfigFile.exists()) {
-                saveResource("bounties.yml", false);
-            }
+    public void saveBountiesDefaultConfig() {
+        if (bountiesConfigFile == null) {
+            bountiesConfigFile = new File(getDataFolder(), "bounties.yml");
+        }
+        if (!bountiesConfigFile.exists()) {
+            saveResource("bounties.yml", false);
+        }
     }
 
-    @Override
-    public void saveConfig() {
-        super.saveConfig();
-            if (bountiesConfig == null || bountiesConfigFile == null) {
-                return;
-            }
-            try {
-                getBountiesConfig().save(bountiesConfigFile);
-            } catch (IOException ex) {
-                getLogger().log(Level.SEVERE, "Could not save config to " + bountiesConfigFile, ex);
-            }
+    public void saveBountiesConfig() {
+        if (bountiesConfig == null || bountiesConfigFile == null) {
+            return;
+        }
+        try {
+            getBountiesConfig().save(bountiesConfigFile);
+        } catch (IOException ex) {
+            getLogger().log(Level.SEVERE, "Could not save config to " + bountiesConfigFile, ex);
+        }
     }
 
     public FileConfiguration getBountiesConfig() {
         if (bountiesConfig == null) {
-            reloadConfig();
+            reloadBountiesConfig();
         }
         return bountiesConfig;
     }
