@@ -7,6 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -151,7 +152,7 @@ public class BountyHead extends JavaPlugin {
                     getBountiesConfig().set("bounties." + target.getName() + ".totalamount", totalamount);
                     getBountiesConfig().set("bounties." + target.getName() + ".placers." + uuid, null);
                     if (totalamount == 0) {
-                        getBountiesConfig().set("bounties." + target.getName() + ".totalamount", null);
+                        getBountiesConfig().set("bounties." + target.getName(), null);
                     }
                     saveBountiesConfig();
                     player.sendMessage(ChatColor.LIGHT_PURPLE + target.getName() + "'s bounty of " + amount + " removed!");
@@ -304,11 +305,31 @@ public class BountyHead extends JavaPlugin {
                 }
                 price *= AMOUNT;
                 if (getBountiesConfig().isSet("bounties." + SKULL_OWNER + ".totalamount")) {
-                    price += getBountiesConfig().getDouble("bounties." + SKULL_OWNER + ".totalamount");
+                    double bounty = getBountiesConfig().getDouble("bounties." + SKULL_OWNER + ".totalamount");
                     for (Player p : Bukkit.getOnlinePlayers()) {
-                        p.sendMessage(ChatColor.GOLD + SKULL_OWNER + "'s head has been sold for " + ChatColor.BOLD
-                                + Utils.formatMoney(price) + ChatColor.GOLD + "!");
+                        StringBuilder message = new StringBuilder();
+                        message.append(ChatColor.GOLD).append(SKULL_OWNER).append("'s head has been sold and ")
+                                .append(player.getDisplayName()).append(" has received the bounty of ")
+                                .append(ChatColor.BOLD).append(Utils.formatMoney(bounty)).append(ChatColor.GOLD)
+                                .append(" placed by ");
+                        int placerIndex = 0;
+                        ConfigurationSection placers = getBountiesConfig().getConfigurationSection("bounties." + SKULL_OWNER + ".placers");
+                        for (String key : placers.getKeys(false)) {
+                            message.append(Bukkit.getPlayer(key).getDisplayName());
+                            if (placerIndex < placers.getKeys(false).size() - 2) {
+                                message.append(", ");
+                            }
+                            else if (placerIndex == placers.getKeys(false).size() - 2) {
+                                message.append(" and ");
+                            }
+                            else {
+                                message.append(".");
+                            }
+                            placerIndex++;
+                        }
+                        p.sendMessage(message.toString());
                     }
+                    price += bounty;
                     getBountiesConfig().set("bounties." + SKULL_OWNER + ".totalamount", null);
                     saveBountiesConfig();
                 }
