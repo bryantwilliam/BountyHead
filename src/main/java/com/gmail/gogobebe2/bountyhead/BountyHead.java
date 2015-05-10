@@ -117,7 +117,9 @@ public class BountyHead extends JavaPlugin {
                         return true;
                     }
                     String target = arguments[0];
-                    //TODO: find the amount matching the target, give the player back his money, then remove the data of the target.
+                    //TODO: find the amount matching the target
+                    //TODO: give the player back his money
+                    //TODO: remove target and it's matching amount value from txt file.
                     return true;
                 }
             }
