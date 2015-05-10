@@ -309,21 +309,21 @@ public class BountyHead extends JavaPlugin {
                     for (Player p : Bukkit.getOnlinePlayers()) {
                         StringBuilder message = new StringBuilder();
                         message.append(ChatColor.GOLD).append(SKULL_OWNER).append("'s head has been sold and ")
-                                .append(player.getDisplayName()).append(" has received the bounty of ")
+                                .append(player.getDisplayName()).append(ChatColor.GOLD).append(" has received the bounty of ")
                                 .append(ChatColor.BOLD).append(Utils.formatMoney(bounty)).append(ChatColor.GOLD)
                                 .append(" placed by ");
                         int placerIndex = 0;
                         ConfigurationSection placers = getBountiesConfig().getConfigurationSection("bounties." + SKULL_OWNER + ".placers");
                         for (String key : placers.getKeys(false)) {
-                            message.append(Bukkit.getPlayer(key).getDisplayName());
+                            message.append(Bukkit.getPlayer(UUID.fromString(key)).getDisplayName());
                             if (placerIndex < placers.getKeys(false).size() - 2) {
-                                message.append(", ");
+                                message.append(ChatColor.GOLD).append(", ");
                             }
                             else if (placerIndex == placers.getKeys(false).size() - 2) {
-                                message.append(" and ");
+                                message.append(ChatColor.GOLD).append(" and ");
                             }
                             else {
-                                message.append(".");
+                                message.append(ChatColor.GOLD).append(".");
                             }
                             placerIndex++;
                         }
