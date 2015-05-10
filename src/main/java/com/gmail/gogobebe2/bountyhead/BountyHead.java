@@ -150,7 +150,7 @@ public class BountyHead extends JavaPlugin {
                     double totalamount = getBountiesConfig().getDouble("bounties." + target.getName() + ".totalamount") - amount;
                     getBountiesConfig().set("bounties." + target.getName() + ".totalamount", totalamount);
                     getBountiesConfig().set("bounties." + target.getName() + ".placers." + uuid, null);
-                    if (amount == 0) {
+                    if (totalamount == 0) {
                         getBountiesConfig().set("bounties." + target.getName() + ".totalamount", null);
                     }
                     saveBountiesConfig();
