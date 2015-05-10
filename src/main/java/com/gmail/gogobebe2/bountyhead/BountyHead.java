@@ -97,6 +97,7 @@ public class BountyHead extends JavaPlugin {
 
                     //TODO: add target and the amount to a list in a txt file.
                         for (Player p : Bukkit.getOnlinePlayers()) {
+                            //noinspection deprecation
                             p.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + player.getName() + ChatColor.GOLD
                                     + " placed bounty of " + ChatColor.DARK_PURPLE + ChatColor.BOLD + formatMoney(amount) + ChatColor.GOLD + " on "
                                     + ChatColor.BOLD + Bukkit.getOfflinePlayer(target).getName() + ChatColor.GOLD + "'s head.");
@@ -126,8 +127,8 @@ public class BountyHead extends JavaPlugin {
 
     private void showCommandUsage(CommandSender sender, String permission, String subCommand, String description) {
         if (sender.hasPermission(permission)) {
-            sender.sendMessage(ChatColor.BLUE + " - " + ChatColor.BOLD + "/bountyhead " + ChatColor.BLUE + subCommand);
-            sender.sendMessage(ChatColor.DARK_PURPLE + "" + ChatColor.ITALIC + description);
+            sender.sendMessage(ChatColor.BLUE + " - " + ChatColor.DARK_BLUE + ChatColor.BOLD + "/bountyhead " + ChatColor.AQUA + subCommand);
+            sender.sendMessage(ChatColor.DARK_PURPLE + "   " + ChatColor.ITALIC + description);
         }
     }
 
