@@ -99,27 +99,27 @@ public class BountyHead extends JavaPlugin {
 
                     economy.withdrawPlayer(player, amount);
 
+                    double totalAmount = amount;
                     UUID uuid = player.getUniqueId();
                     if (getBountiesConfig().isSet("bounties." + target.getName() + ".totalamount")) {
                         if (getBountiesConfig().isSet("bounties." + target.getName() + ".placers." + uuid)) {
                             getBountiesConfig().set("bounties." + target.getName() + ".placers." + uuid, getBountiesConfig().getDouble("bounties." + target.getName() + ".placers." + uuid) + amount);
-                        } else {
-                            getBountiesConfig().set("bounties." + target.getName() + ".placers." + player.getUniqueId(), amount);
                         }
                         player.sendMessage(ChatColor.AQUA + "You have added a bounty of " + amount + " to " + target.getName() + "'s head.");
-                        amount += getBountiesConfig().getDouble("bounties." + target.getName() + ".totalamount");
+                        totalAmount += getBountiesConfig().getDouble("bounties." + target.getName() + ".totalamount");
                     }
 
-                    getBountiesConfig().set("bounties." + target.getName() + ".totalamount", amount);
+                    getBountiesConfig().set("bounties." + target.getName() + ".totalamount", totalAmount);
+                    getBountiesConfig().set("bounties." + target.getName() + ".placers." + player.getUniqueId(), amount);
 
                     saveBountiesConfig();
 
                     for (Player p : Bukkit.getOnlinePlayers()) {
                         //noinspection deprecation
                         p.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + player.getName() + ChatColor.GOLD
-                                + " placed bounty of " + ChatColor.DARK_PURPLE + ChatColor.BOLD + Utils.formatMoney(amount) + ChatColor.GOLD + " on "
+                                + " placed bounty of " + ChatColor.DARK_PURPLE + ChatColor.BOLD + Utils.formatMoney(totalAmount) + ChatColor.GOLD + " on "
                                 + ChatColor.BOLD + target.getName() + ChatColor.GOLD + "'s head.");
-                        if (amount > 9000) {
+                        if (totalAmount > 9000) {
                             p.sendMessage(ChatColor.BLUE + "" + ChatColor.BOLD + "Holy shit! " + ChatColor.RED + target.getName() + "'s bounty has reached over 9000!!!!!!!!");
                         }
                         p.sendMessage(ChatColor.YELLOW + target.getName() + " has " + ChatColor.ITALIC + "Someone kill him!");
