@@ -100,17 +100,17 @@ public class BountyHead extends JavaPlugin {
                     economy.withdrawPlayer(player, amount);
 
                     UUID uuid = player.getUniqueId();
-                    if (getBountiesConfig().isSet("bounties." + target.getName())) {
+                    if (getBountiesConfig().isSet("bounties." + target.getName() + ".totalamount")) {
                         if (getBountiesConfig().isSet("bounties." + target.getName() + ".placers." + uuid)) {
                             getBountiesConfig().set("bounties." + target.getName() + ".placers." + uuid, getBountiesConfig().getDouble("bounties." + target.getName() + ".placers." + uuid) + amount);
                         } else {
                             getBountiesConfig().set("bounties." + target.getName() + ".placers." + player.getUniqueId(), amount);
                         }
                         player.sendMessage(ChatColor.AQUA + "You have added a bounty of " + amount + " to " + target.getName() + "'s head.");
-                        amount += getBountiesConfig().getDouble("bounties." + target.getName());
+                        amount += getBountiesConfig().getDouble("bounties." + target.getName() + ".totalamount");
                     }
 
-                    getBountiesConfig().set("bounties." + target.getName(), amount);
+                    getBountiesConfig().set("bounties." + target.getName() + ".totalamount", amount);
 
                     saveBountiesConfig();
 
@@ -137,7 +137,7 @@ public class BountyHead extends JavaPlugin {
                         return true;
                     }
                     @SuppressWarnings("deprecation") OfflinePlayer target = Bukkit.getOfflinePlayer(arguments[0]);
-                    if (!getBountiesConfig().isSet("bounties." + target.getName())) {
+                    if (!getBountiesConfig().isSet("bounties." + target.getName() + ".totalamount")) {
                         player.sendMessage(ChatColor.RED + "Error! No player with the name " + target.getName() + " has a bounty on their head.");
                         return true;
                     }
@@ -146,11 +146,11 @@ public class BountyHead extends JavaPlugin {
                         player.sendMessage(ChatColor.RED + "Error! You never placed a bounty on " + target.getName() + "!");
                         return true;
                     }
-                    double amount = getBountiesConfig().getDouble("bounties." + target.getName()) - getBountiesConfig().getDouble("bounties." + target.getName() + ".placers." + uuid);
-                    getBountiesConfig().set("bounties." + target.getName(), amount);
+                    double amount = getBountiesConfig().getDouble("bounties." + target.getName() + ".totalamount") - getBountiesConfig().getDouble("bounties." + target.getName() + ".placers." + uuid);
+                    getBountiesConfig().set("bounties." + target.getName() + ".totalamount", amount);
                     getBountiesConfig().set("bounties." + target.getName() + ".placers." + uuid, null);
                     if (amount == 0) {
-                        getBountiesConfig().set("bounties." + target.getName(), null);
+                        getBountiesConfig().set("bounties." + target.getName() + ".totalamount", null);
                     }
                     saveBountiesConfig();
                     player.sendMessage(target.getName() + "'s bounty of ");
@@ -302,13 +302,13 @@ public class BountyHead extends JavaPlugin {
                     AMOUNT = 1;
                 }
                 price *= AMOUNT;
-                if (getBountiesConfig().isSet("bounties." + SKULL_OWNER)) {
-                    price += getBountiesConfig().getDouble("bounties." + SKULL_OWNER);
+                if (getBountiesConfig().isSet("bounties." + SKULL_OWNER + ".totalamount")) {
+                    price += getBountiesConfig().getDouble("bounties." + SKULL_OWNER + ".totalamount");
                     for (Player p : Bukkit.getOnlinePlayers()) {
                         p.sendMessage(ChatColor.GOLD + SKULL_OWNER + "'s head has been sold for " + ChatColor.BOLD
                                 + Utils.formatMoney(price) + ChatColor.GOLD + "!");
                     }
-                    getBountiesConfig().set("bounties." + SKULL_OWNER, null);
+                    getBountiesConfig().set("bounties." + SKULL_OWNER + ".totalamount", null);
                     saveBountiesConfig();
                 }
 
