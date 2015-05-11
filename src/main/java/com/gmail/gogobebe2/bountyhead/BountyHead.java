@@ -1,10 +1,13 @@
 package com.gmail.gogobebe2.bountyhead;
 
 import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.block.Block;
+import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -72,7 +75,7 @@ public class BountyHead extends JavaPlugin {
                     saveBountiesConfig();
                     sender.sendMessage(ChatColor.GREEN + "Config files reloaded!");
                     return true;
-                } else if ((subCommand.equalsIgnoreCase("placebounty") || subCommand.equalsIgnoreCase("p")) && checkPermission(sender, "bountyhead.placebounty")) {
+                } else if ((subCommand.equalsIgnoreCase("placebounty") || subCommand.equalsIgnoreCase("p") || subCommand.equalsIgnoreCase("place")) && checkPermission(sender, "bountyhead.placebounty")) {
                     if (!(sender instanceof Player)) {
                         sender.sendMessage(ChatColor.RED + "Error! You have to be a player to use this command!");
                         return true;
@@ -103,7 +106,15 @@ public class BountyHead extends JavaPlugin {
                         return true;
                     }
 
-                    economy.withdrawPlayer(player, amount);
+                    EconomyResponse r = economy.withdrawPlayer(player, amount);
+                    if (r.transactionSuccess()) {
+                        player.sendMessage(ChatColor.AQUA + "You have added a bounty of " + ChatColor.GREEN
+                                + economy.format(r.amount) + ChatColor.AQUA + " to " + ChatColor.GREEN
+                                + target.getName() + ChatColor.AQUA + "'s head.");
+                    } else {
+                        sender.sendMessage(ChatColor.RED + "An error occurred: " + r.errorMessage);
+                        return true;
+                    }
 
                     double totalAmount = amount;
                     UUID uuid = player.getUniqueId();
@@ -111,7 +122,6 @@ public class BountyHead extends JavaPlugin {
                         if (getBountiesConfig().isSet("bounties." + target.getName() + ".placers." + uuid)) {
                             getBountiesConfig().set("bounties." + target.getName() + ".placers." + uuid, getBountiesConfig().getDouble("bounties." + target.getName() + ".placers." + uuid) + amount);
                         }
-                        player.sendMessage(ChatColor.AQUA + "You have added a bounty of " + amount + " to " + target.getName() + "'s head.");
                         totalAmount += getBountiesConfig().getDouble("bounties." + target.getName() + ".totalamount");
                     }
 
@@ -123,7 +133,7 @@ public class BountyHead extends JavaPlugin {
                     for (Player p : Bukkit.getOnlinePlayers()) {
                         //noinspection deprecation
                         p.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + player.getName() + ChatColor.GOLD
-                                + " placed bounty of " + ChatColor.DARK_PURPLE + ChatColor.BOLD + Utils.formatMoney(totalAmount) + ChatColor.GOLD + " on "
+                                + " placed bounty of " + ChatColor.DARK_PURPLE + ChatColor.BOLD + economy.format(totalAmount) + ChatColor.GOLD + " on "
                                 + ChatColor.BOLD + target.getName() + ChatColor.GOLD + "'s head.");
                         if (totalAmount > 9000) {
                             p.sendMessage(ChatColor.BLUE + "" + ChatColor.BOLD + "Holy shit! " + ChatColor.RED + target.getName() + "'s bounty has reached over 9000!!!!!!!!");
@@ -316,7 +326,7 @@ public class BountyHead extends JavaPlugin {
                         StringBuilder message = new StringBuilder();
                         message.append(ChatColor.GOLD).append(SKULL_OWNER).append("'s head has been sold and ")
                                 .append(player.getDisplayName()).append(ChatColor.GOLD).append(" has received the bounty of ")
-                                .append(ChatColor.BOLD).append(Utils.formatMoney(bounty)).append(ChatColor.GOLD)
+                                .append(ChatColor.BOLD).append(economy.format(bounty)).append(ChatColor.GOLD)
                                 .append(" placed by ");
                         int placerIndex = 0;
                         ConfigurationSection placers = getBountiesConfig().getConfigurationSection("bounties." + SKULL_OWNER + ".placers");
@@ -324,11 +334,9 @@ public class BountyHead extends JavaPlugin {
                             message.append(Bukkit.getPlayer(UUID.fromString(key)).getDisplayName());
                             if (placerIndex < placers.getKeys(false).size() - 2) {
                                 message.append(ChatColor.GOLD).append(", ");
-                            }
-                            else if (placerIndex == placers.getKeys(false).size() - 2) {
+                            } else if (placerIndex == placers.getKeys(false).size() - 2) {
                                 message.append(ChatColor.GOLD).append(" and ");
-                            }
-                            else {
+                            } else {
                                 message.append(ChatColor.GOLD).append(".");
                             }
                             placerIndex++;
@@ -340,17 +348,33 @@ public class BountyHead extends JavaPlugin {
                 }
 
                 //noinspection deprecation
-                economy.withdrawPlayer(SKULL_OWNER, price);
-                price += bounty;
-                economy.depositPlayer(player, price);
 
                 item.setAmount(item.getAmount() - AMOUNT);
                 inventory.setItem(slot, item);
                 player.updateInventory();
-                player.sendMessage(ChatColor.BLUE + "Sold "
-                        + (IS_SNEAKING ? ChatColor.DARK_GREEN + "" + ChatColor.BOLD + AMOUNT : "a") + " " + ChatColor.DARK_GREEN
-                        + ChatColor.ITALIC + SKULL_OWNER + ChatColor.BLUE + (IS_SNEAKING ? " heads " : " head") + " for "
-                        + ChatColor.DARK_GREEN + Utils.formatMoney(price) + ChatColor.BLUE + ".");
+
+                OfflinePlayer owner = Bukkit.getOfflinePlayer(SKULL_OWNER);
+                EconomyResponse transaction = economy.withdrawPlayer(owner, price);
+                if (owner.isOnline()) {
+                    Player target = owner.getPlayer();
+                    if (transaction.transactionSuccess()) {
+                        target.sendMessage(ChatColor.GREEN + player.getDisplayName() + ChatColor.AQUA + " has sold your head and has taken " + ChatColor.GREEN
+                                + economy.format(transaction.amount) + ChatColor.AQUA + " from your balance.");
+                    } else {
+                        target.sendMessage(ChatColor.RED + "An error occurred while someone was trying to sell your head: " + transaction.errorMessage);
+                    }
+                }
+                price += bounty;
+                EconomyResponse deposit = economy.depositPlayer(player, price);
+                if (deposit.transactionSuccess()) {
+                    player.sendMessage(ChatColor.BLUE + "Sold "
+                            + (IS_SNEAKING ? ChatColor.DARK_GREEN + "" + ChatColor.BOLD + AMOUNT : "a") + " " + ChatColor.DARK_GREEN
+                            + ChatColor.ITALIC + SKULL_OWNER + ChatColor.BLUE + (IS_SNEAKING ? " heads " : " head") + " for "
+                            + ChatColor.DARK_GREEN + economy.format(price) + ChatColor.BLUE + ".");
+                }
+                else {
+                    player.sendMessage(ChatColor.RED + "An error occured while trying to sell a head: " + deposit.errorMessage);
+                }
             }
         } else {
             player.sendMessage(ChatColor.RED + "Error! You do not have permission to use head signs!");
@@ -367,6 +391,15 @@ public class BountyHead extends JavaPlugin {
         }
         economy = rsp.getProvider();
         return economy != null;
+    }
+
+    public static boolean isHeadSign(Block block) {
+        if (!(block.getState() instanceof Sign)) {
+            return false;
+        }
+        Sign sign = (Sign) block.getState();
+        String[] signLines = sign.getLines();
+        return signLines[0].equalsIgnoreCase(ChatColor.DARK_BLUE + " [Sell] ") && signLines[1].equalsIgnoreCase(" Head ");
     }
 
     public void reloadBountiesConfig() {

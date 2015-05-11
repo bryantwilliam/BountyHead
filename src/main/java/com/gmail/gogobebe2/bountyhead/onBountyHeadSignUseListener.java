@@ -20,7 +20,7 @@ public class onBountyHeadSignUseListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onHeadPlace(BlockPlaceEvent event) {
         if (event.isCancelled()) return;
-        if (event.getBlockPlaced().getType().equals(Material.SKULL) && Utils.isHeadSign(event.getBlockAgainst())) {
+        if (event.getBlockPlaced().getType().equals(Material.SKULL) && BountyHead.isHeadSign(event.getBlockAgainst())) {
             event.setCancelled(true);
         }
     }
@@ -30,7 +30,7 @@ public class onBountyHeadSignUseListener implements Listener {
         if (event.isCancelled()) return;
         Player player = event.getPlayer();
         if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-            if (Utils.isHeadSign(event.getClickedBlock())) {
+            if (BountyHead.isHeadSign(event.getClickedBlock())) {
                 plugin.sellSkull(player);
             }
         }
