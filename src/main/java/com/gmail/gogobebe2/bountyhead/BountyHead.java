@@ -138,7 +138,7 @@ public class BountyHead extends JavaPlugin {
                         if (totalAmount > 9000) {
                             p.sendMessage(ChatColor.BLUE + "" + ChatColor.BOLD + "Holy shit! " + ChatColor.RED + target.getName() + "'s bounty has reached over 9000!!!!!!!!");
                         }
-                        p.sendMessage(ChatColor.YELLOW + target.getName() + " has " + ChatColor.ITALIC + "Someone kill him!");
+                        p.sendMessage(ChatColor.ITALIC + "Someone kill him!");
                     }
                     return true;
                 } else if ((subCommand.equalsIgnoreCase("removebounty") || subCommand.equalsIgnoreCase("r")) && checkPermission(sender, "bountyhead.placebounty")) {
@@ -210,7 +210,8 @@ public class BountyHead extends JavaPlugin {
         String head;
         if (skullMeta.hasOwner()) {
             head = skullMeta.getOwner();
-        } else if (skullMeta.hasDisplayName()) {
+        }
+        else if (skullMeta.hasDisplayName()) {
             head = skullMeta.getDisplayName();
         } else if (skull.getDurability() == 0) {
             head = "Skeleton";
@@ -331,7 +332,7 @@ public class BountyHead extends JavaPlugin {
                         int placerIndex = 0;
                         ConfigurationSection placers = getBountiesConfig().getConfigurationSection("bounties." + SKULL_OWNER + ".placers");
                         for (String key : placers.getKeys(false)) {
-                            message.append(Bukkit.getPlayer(UUID.fromString(key)).getDisplayName());
+                            message.append(Bukkit.getPlayer(UUID.fromString(key)).getName());
                             if (placerIndex < placers.getKeys(false).size() - 2) {
                                 message.append(ChatColor.GOLD).append(", ");
                             } else if (placerIndex == placers.getKeys(false).size() - 2) {
@@ -353,7 +354,7 @@ public class BountyHead extends JavaPlugin {
                 inventory.setItem(slot, item);
                 player.updateInventory();
 
-                OfflinePlayer owner = Bukkit.getOfflinePlayer(SKULL_OWNER);
+                @SuppressWarnings("deprecation") OfflinePlayer owner = Bukkit.getOfflinePlayer(SKULL_OWNER);
                 EconomyResponse transaction = economy.withdrawPlayer(owner, price);
                 if (owner.isOnline()) {
                     Player target = owner.getPlayer();
