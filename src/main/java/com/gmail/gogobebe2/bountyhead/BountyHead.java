@@ -313,6 +313,12 @@ public class BountyHead extends JavaPlugin {
                 }
                 ItemStack item = inventory.getItem(slot);
                 final String SKULL_OWNER = getSkullOwner(item);
+                if (SKULL_OWNER.equalsIgnoreCase(player.getName())
+                        || SKULL_OWNER.equalsIgnoreCase(player.getDisplayName())
+                        || SKULL_OWNER.equalsIgnoreCase(player.getCustomName())) {
+                    player.sendMessage(ChatColor.RED + "Oi! You sneaky sneaky kid. You can't sell your own head!");
+                    return;
+                }
                 double price = getSkullPrice(item);
                 if (IS_SNEAKING) {
                     AMOUNT = item.getAmount();
