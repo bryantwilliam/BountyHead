@@ -12,7 +12,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 public class onMobDropHeadListener implements Listener {
     @EventHandler
     private void onEntityDeathEvent(EntityDeathEvent event) {
-        ItemStack skull = new ItemStack(Material.SKULL, 1);
+        ItemStack skull = new ItemStack(Material.SKULL_ITEM, 1);
         SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
 
         Entity entity = event.getEntity();
