@@ -41,6 +41,7 @@ public class BountyHead extends JavaPlugin {
         saveBountiesDefaultConfig();
         getServer().getPluginManager().registerEvents(new onBountyHeadSignCreateListener(), this);
         getServer().getPluginManager().registerEvents(new onBountyHeadSignUseListener(this), this);
+        getServer().getPluginManager().registerEvents(new onMobDropHeadListener(), this);
     }
 
     @Override
@@ -205,7 +206,7 @@ public class BountyHead extends JavaPlugin {
         }
     }
 
-    private String getSkullOwner(ItemStack skull) {
+    protected String getSkullOwner(ItemStack skull) {
         SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
         String head;
         if (skullMeta.hasOwner()) {
@@ -230,7 +231,7 @@ public class BountyHead extends JavaPlugin {
     }
 
 
-    private HeadType getHeadType(String owner) {
+    protected HeadType getHeadType(String owner) {
         if (owner.contains("MHF_")) {
             owner = owner.replaceFirst("MHF_", "");
         }
