@@ -27,12 +27,11 @@ public class onMobDropHeadListener implements Listener {
             case ZOMBIE:
                 skull.setDurability((short) 2);
                 break;
-            case PLAYER:
-                skull.setDurability((short) 3);
-                owner = entity.getName();
-                break;
             case CREEPER:
                 skull.setDurability((short) 4);
+                break;
+            case PLAYER:
+                owner = entity.getName();
                 break;
             case BLAZE:
                 owner = "Blaze";
@@ -88,6 +87,7 @@ public class onMobDropHeadListener implements Listener {
         }
 
         if (owner != null) {
+            skull.setDurability((short) 3);
             if (!(entity instanceof Player)) owner = "MHF_" + owner;
             skullMeta.setOwner(owner);
         }
