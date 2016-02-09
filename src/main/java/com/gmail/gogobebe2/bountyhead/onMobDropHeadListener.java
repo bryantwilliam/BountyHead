@@ -90,7 +90,7 @@ public class onMobDropHeadListener implements Listener {
             skull.setDurability((short) 3);
             if (!(entity instanceof Player)) {
                 owner = "MHF_" + owner;
-                skullMeta.setDisplayName(owner.replace("MHF_", ""));
+                skullMeta.setDisplayName(owner.replace("MHF_", "") + " Head");
             }
             skullMeta.setOwner(owner);
         }
